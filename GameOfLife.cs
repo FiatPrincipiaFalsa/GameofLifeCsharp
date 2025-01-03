@@ -25,80 +25,83 @@ public class program
 
 		//input initial state
 		int b = 0;
-		while(b<Area)
+		while(b < Area)
 		{
-			state[b/Length,b%Length] = "x";
+			state[b / Length, b % Length] = "x";
 			int c = 0;
-			while ( c<Area)
+			while(c < Area)
 			{	
-				Console.Write(state[c/Length,c%Length]);
-				if ((c+1)%Length == 0)Console.Write("\n");
+				Console.Write(state[c / Length, c % Length]);
+				if((c + 1) % Length == 0)Console.Write("\n");
 				c++;
 			}
 			string input = "";
-			while (input != "0" && input != "1")
+			while(input != "0" && input != "1")
 			{
-				Console.WriteLine("\nPlease enter state 1/0");
+				Console.WriteLine("\nPlease enter state 1/(0)");
 				input = Console.ReadLine();
+				if(input == "")
+				{
+					input = "0";
+				}
 			}
-			state[b / Length , b % Length] = input;
+			state[b / Length, b % Length] = input;
 			Console.Clear();
 			b++;
 		}
-
-
-
+		
+		//simulation of the automita
 		int generation = 0;
-		while(generation<generationlim+1)
+		while(generation < generationlim + 1)
 		{
-			string[,] nextstate = new string[Length,Length];
-			int k = 0;
-			while(k<Area)
+			string[,] nextstate = new string[Length, Length];
+			int d = 0;
+			while(d < Area)
 			{
 				int pop = 0;
-				int l = 0;
-				while(l<9)
+				int e = 0;
+				while(e < 9)
 				{
-					if ( ((k/Length)-1)+(l/3) < 0 || ((k/Length)-1)+(l/3) > (Length - 1) || ((k%Length)-1)+(l%3) < 0 || ((k%Length)-1)+(l%3) >(Length - 1))
+					if(((d / Length) - 1) + (e / 3) < 0 || ((d / Length) - 1) + (e / 3) > (Length - 1) || ((d % Length) - 1) + (e % 3) < 0 || ((d % Length) - 1) + (e % 3) > (Length - 1))
 					{
 					}
 					else
 					{
-						if (state[((k/Length)-1)+(l/3),((k%Length)-1)+(l%3)] == "1" && l!=4 )
+						if(state[((d / Length) - 1) + (e / 3), ((d % Length) - 1) + (e % 3)] == "1" && e != 4 )
 						{
 							pop++;
 						}
 					}
-					l++;
+					e++;
 				}
-				if (state[k/Length,k%Length] == "1" &&( pop<2 || pop>3))
+				if(state[d / Length, d % Length] == "1" && ( pop < 2 || pop > 3))
 				{
-					nextstate[k/Length,k%Length] = "0";
+					nextstate[d / Length, d % Length] = "0";
 				}
-				if (state[k/Length,k%Length] == "1" &&( pop==2 || pop==3))
+				if(state[d / Length, d % Length] == "1" && ( pop == 2 || pop == 3))
 				{
-					nextstate[k/Length,k%Length] = "1";
+					nextstate[d / Length , d % Length] = "1";
 				}
-				if (state[k/Length,k%Length] == "0" && pop == 3)
+				if(state[d / Length, d % Length] == "0" && pop == 3)
 				{
-					nextstate[k/Length,k%Length] = "1";
+					nextstate[d / Length, d % Length] = "1";
 				}
-				if (state[k/Length,k%Length] == "0" && pop != 3)
+				if (state[d / Length, d % Length] == "0" && pop != 3)
 				{
-					nextstate[k/Length,k%Length] = "0";
+					nextstate[d / Length, d % Length] = "0";
 				}
-				k++;
+				d++;
 
 			}
 			Console.Clear();
-			int m = 0;
-			while(m<Area)
+			int f = 0;
+			while(f < Area)
 			{
-				Console.Write(nextstate[m/Length,m%Length]);
-				if((m+1)%Length == 0)Console.Write("\n");
-				m++;
+				Console.Write(nextstate[f / Length, f % Length]);
+				if((f + 1) % Length == 0)Console.Write("\n");
+				f++;
 			}
-			Console.Write(Convert.ToString(generation)+"/"+Convert.ToString(generationlim));
+			Console.Write(Convert.ToString(generation) + "/" + Convert.ToString(generationlim));
 			System.Threading.Thread.Sleep(downtime);
 			Console.Write("\n\n\n");
 			generation++;
