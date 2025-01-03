@@ -48,29 +48,6 @@ public class program
 
 
 
-
-
-
-
-
-
-		//print grid    not sure if needed???
-		int d = 0;
-		while(d<Area)
-		{
-			Console.Write(state[d/Length,d%Length]);
-			if ((d+1)%Length == 0)Console.Write("\n");
-			d++;
-		}
-		
-		
-		
-
-
-
-
-
-
 		int generation = 0;
 		while(generation<generationlim+1)
 		{
