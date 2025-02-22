@@ -19,14 +19,16 @@ public class program
 		int a = 0;
 		while(a < Area)
 		{
-			state[a / Length, a % Length] = "-";
+			state[a / Length, a % Length] = "0";
 			a++;
 		}
 
 		//input initial state
+		bool Settup = true;
 		int b = 0;
-		while(b < Area)
+		while(Settup == true)
 		{
+			string Hold = state[b / Length, b%Length];
 			state[b / Length, b % Length] = "x";
 			int c = 0;
 			while(c < Area)
@@ -35,19 +37,74 @@ public class program
 				if((c + 1) % Length == 0)Console.Write("\n");
 				c++;
 			}
-			string input = "";
-			while(input != "0" && input != "1")
+			Console.WriteLine("("+Hold+")");
+			Console.WriteLine("Toggle  (x)");
+			Console.WriteLine("Execute (Rtn)");
+			//string input = "";
+			//while(input != "0" && input != "1")
+			//{
+			//	Console.WriteLine("\nPlease enter state 1/(0)");
+			//	input = Console.ReadLine();
+			//	if(input == "")
+			//	{
+			//		input = "0";
+			//	}
+			//}
+			//state[b / Length, b % Length] = input;
+			//Console.Clear();
+			//b++;
+			var ch = Console.ReadKey(false).Key;
+			switch(ch)
 			{
-				Console.WriteLine("\nPlease enter state 1/(0)");
-				input = Console.ReadLine();
-				if(input == "")
-				{
-					input = "0";
-				}
+				case ConsoleKey.RightArrow:
+					state[b / Length, b % Length] = Hold;
+					Console.Clear();
+					if(b == Area - 1)
+						b = 0;
+					else
+						b = b + 1;
+					break;
+				case ConsoleKey.LeftArrow:
+					state[b / Length, b % Length] = Hold;
+					Console.Clear();
+					if(b == 0)
+						b = Area - 1;
+					else
+						b = b - 1;
+					break;
+				case ConsoleKey.UpArrow:
+					state[b / Length, b % Length] = Hold;
+					Console.Clear();
+					if(b/Length == 0)
+						b = b+ Length*(Length-1);
+					else
+						b = b - Length;
+					break;
+				case ConsoleKey.DownArrow:
+					state[b/Length,b%Length] = Hold;
+					Console.Clear();
+					if(b/Length == Length-1)
+						b = b - Length*(Length-1);
+					else
+						b = b + Length;
+					break;
+				case ConsoleKey.X:
+					if (Hold == "0")
+						state[b/Length,b%Length] = "1";
+					else
+						state[b/Length,b%Length] = "0";
+					Console.Clear();
+					break;
+				case ConsoleKey.Enter:
+					state[b/Length,b%Length] = Hold;
+					Console.Clear();
+					Settup = false;
+					break;
+				default:
+					state[b/Length,b%Length]=Hold;
+					Console.Clear();
+					break;
 			}
-			state[b / Length, b % Length] = input;
-			Console.Clear();
-			b++;
 		}
 		
 		//simulation of the automita
