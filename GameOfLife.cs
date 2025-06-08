@@ -1,158 +1,239 @@
 using System;
 public class program
 {
+	static bool Wrap;
+	static bool Settup;
+	static int AliveNeighbourCount(int Row, int Column, string[,] State)
+	{
+		int AliveCount = 0; 
+		for (int Neighbour = 0 ; Neighbour < 9 ; Neighbour++ )
+		{	
+			int NeighbourRow = Row + ((Neighbour / 3) - 1);
+			int NeighbourColumn = Column + ((Neighbour % 3) - 1);
+			if (Wrap)
+			{
+				NeighbourRow = (NeighbourRow + State.GetLength(0)) % (State.GetLength(0));
+				NeighbourColumn = (NeighbourColumn + State.GetLength(0)) % (State.GetLength(0));
+			}
+
+			if (NeighbourRow == Row && NeighbourColumn == Column)
+			{
+				continue;
+			}
+
+			if (IsCellAlive(NeighbourRow, NeighbourColumn, State))
+			{
+				AliveCount++;
+			}
+		}
+		return AliveCount;
+
+	}
+
+	static bool IsCellAlive(int Row ,int Column, string[,] State)
+	{
+		if (
+			Row < 0
+			|| Row > (State.GetLength(0) - 1)
+			|| Column < 0
+			|| Column > (State.GetLength(0) - 1)
+		)
+		{
+			return false;
+		}
+		return State[Row, Column] == "\u25a0 " ;
+	}
+
+	static int AskSleep()
+	{
+		Console.WriteLine("Natural amount of sleep inbetween generations (50 ms):");
+		string Downtime = Console.ReadLine();
+		if( Downtime != "")
+		{
+			return Convert.ToInt32(Downtime);
+		}
+		return 50;	
+	}
+
+	static int AskGenerations()
+	{
+		Console.WriteLine("Natural amount of generations to be simulated (200 Gemerations):");
+		string GenerationLimit = Console.ReadLine();
+		if(GenerationLimit != "")
+		{
+			return Convert.ToInt32(GenerationLimit);
+		}
+		return 200;
+	}
+
+	static int AskMatrixSize()
+	{
+		Console.WriteLine("Natural size of square grid for simulation (10):");
+		string Length = Console.ReadLine();
+		if(Length != "")
+		{
+			return  Convert.ToInt32(Length);
+		}
+		return 10;
+	}
+
+	static bool AskWrap()
+	{
+		Console.Write("wrapped border or dead border (W/d):");
+		if(Console.ReadLine() == "d")
+		{
+			return false;
+		}
+		return true;
+	}
+
+	static string[,] InitialiseState(int Length, int Area)
+	{
+		string[,] State = new string[Length, Length];
+		int i = 0;
+		while(i < Area)
+		{
+			State[i / Length, i % Length] = "\u25a1 ";
+			i++;
+		}
+		return State;
+	}
+
+	static void DrawState(int Length, int Area, string[,] State)
+	{
+		int i = 0;
+		while(i < Area)
+		{	
+			Console.Write(State[i / Length, i % Length]);
+			if((i + 1) % Length == 0)Console.Write("\n");
+			i++;
+		}
+	}
+
+	static int ReadKeyPressed(int Cursor, int Length, int Area, string Hold, string[,] State)
+	{
+		var ch = Console.ReadKey(false).Key;
+		switch(ch)
+		{
+			case ConsoleKey.RightArrow:
+				State[Cursor / Length, Cursor % Length] = Hold;
+				Console.Clear();
+				if(Cursor == Area - 1)
+					Cursor = 0;
+				else
+					Cursor = Cursor + 1;
+				break;
+			case ConsoleKey.LeftArrow:
+				State[Cursor / Length, Cursor % Length] = Hold;
+				Console.Clear();
+				if(Cursor == 0)
+					Cursor = Area - 1;
+				else
+					Cursor = Cursor - 1;
+				break;
+			case ConsoleKey.UpArrow:
+				State[Cursor / Length, Cursor % Length] = Hold;
+				Console.Clear();
+				if(Cursor / Length == 0)
+					Cursor = Cursor + Length * (Length - 1);
+				else
+					Cursor = Cursor - Length;
+				break;
+			case ConsoleKey.DownArrow:
+				State[Cursor / Length, Cursor % Length] = Hold;
+				Console.Clear();
+				if(Cursor / Length == Length - 1)
+					Cursor = Cursor - Length * (Length - 1);
+				else
+					Cursor = Cursor + Length;
+				break;
+			case ConsoleKey.X:
+				if (Hold == "\u25a1 ")
+					State[Cursor / Length, Cursor % Length] = "\u25a0 ";
+				else
+					State[Cursor / Length, Cursor % Length] = "\u25a1 ";
+				Console.Clear();
+				break;
+			case ConsoleKey.Enter:
+				State[Cursor / Length , Cursor % Length] = Hold;
+				Console.Clear();
+				Settup = false;
+				break;
+			default:
+				State[Cursor / Length , Cursor % Length] = Hold;
+				Console.Clear();
+				break;
+		}
+		return Cursor;
+	}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	static string[,] GenerateNextState(int Length, int Area, string[,] State)
+	{
+		string[,] NextState = new string[Length, Length];
+		for(int i = 0; i < Area; i++)
+		{
+			int Row = i / Length;
+			int Column = i % Length;
+			int Pop = AliveNeighbourCount(Row, Column, State);
+
+			if(State[Row, Column] == "\u25a0 " && ( Pop < 2 || Pop > 3))
+			{
+				NextState[Row, Column] = "\u25a1 ";
+				Console.SetCursorPosition(2*Column,Row);
+				Console.Write("\u25a1 ");
+				continue;
+			}
+			if(State[Row, Column] == "\u25a1 " && Pop == 3)
+			{
+				NextState[Row, Column] = "\u25a0 ";
+				Console.SetCursorPosition(2*Column,Row);
+				Console.Write("\u25a0 ");
+				continue;
+			}
+			else 
+			{
+				NextState[Row, Column] = State[Row, Column];
+			}
+		}
+		return NextState;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+	}
 	public static void Main()
 	{
 		Console.Clear();
-		Console.WriteLine("Hello, Welcome to Jonnys Game of Life.");
-		Console.WriteLine("Natural amount of sleep inbetween generations(ms):");
-		int downtime = Convert.ToInt32(Console.ReadLine());
-		Console.WriteLine("Natural amount of generations to be simulated:");
-		int generationlim = Convert.ToInt32(Console.ReadLine());
-		Console.WriteLine("Natural size of square grid for simulation:");
-		int Length = Convert.ToInt32(Console.ReadLine());
+		int Downtime = AskSleep();
+		int Generationlim = AskGenerations();
+		int Length = AskMatrixSize();
 		int Area = Length * Length;
+		Wrap = AskWrap();
 		Console.Clear();
-
-		//Create "Dead" state
-		string[,] state = new string[Length, Length];
-		int a = 0;
-		while(a < Area)
-		{
-			state[a / Length, a % Length] = "0";
-			a++;
-		}
-
-		//Draw state 0
-		bool Settup = true;
-		int b = 0;
-		while(Settup == true)
-		{
-			string Hold = state[b / Length, b % Length];
-			state[b / Length, b % Length] = "x";
-			int c = 0;
-			while(c < Area)
-			{	
-				Console.Write(state[c / Length, c % Length]);
-				if((c + 1) % Length == 0)Console.Write("\n");
-				c++;
-			}
-			Console.WriteLine("(" + Hold + ")");
-			Console.WriteLine("Toggle  (x)");
-			Console.WriteLine("Execute (Rtn)");
-
-			//Input state 0
-			var ch = Console.ReadKey(false).Key;
-			switch(ch)
-			{
-				case ConsoleKey.RightArrow:
-					state[b / Length, b % Length] = Hold;
-					Console.Clear();
-					if(b == Area - 1)
-						b = 0;
-					else
-						b = b + 1;
-					break;
-				case ConsoleKey.LeftArrow:
-					state[b / Length, b % Length] = Hold;
-					Console.Clear();
-					if(b == 0)
-						b = Area - 1;
-					else
-						b = b - 1;
-					break;
-				case ConsoleKey.UpArrow:
-					state[b / Length, b % Length] = Hold;
-					Console.Clear();
-					if(b / Length == 0)
-						b = b + Length * (Length - 1);
-					else
-						b = b - Length;
-					break;
-				case ConsoleKey.DownArrow:
-					state[b / Length, b % Length] = Hold;
-					Console.Clear();
-					if(b / Length == Length - 1)
-						b = b - Length * (Length - 1);
-					else
-						b = b + Length;
-					break;
-				case ConsoleKey.X:
-					if (Hold == "0")
-						state[b / Length, b % Length] = "1";
-					else
-						state[b / Length, b % Length] = "0";
-					Console.Clear();
-					break;
-				case ConsoleKey.Enter:
-					state[b / Length , b % Length] = Hold;
-					Console.Clear();
-					Settup = false;
-					break;
-				default:
-					state[b / Length , b % Length] = Hold;
-					Console.Clear();
-					break;
-			}
-		}
 		
-		//simulation of the automita
-		int generation = 0;
-		while(generation < generationlim + 1)
+		string[,] State = InitialiseState(Length, Area);
+		
+		int Cursor = 0;
+		Settup = true;
+		while(Settup)
 		{
-			string[,] nextstate = new string[Length, Length];
-			int d = 0;
-			while(d < Area)
-			{
-				int pop = 0;
-				int e = 0;
-				while(e < 9)
-				{
-					if(((d / Length) - 1) + (e / 3) < 0 || ((d / Length) - 1) + (e / 3) > (Length - 1) || ((d % Length) - 1) + (e % 3) < 0 || ((d % Length) - 1) + (e % 3) > (Length - 1))
-					{
-					}
-					else
-					{
-						if(state[((d / Length) - 1) + (e / 3), ((d % Length) - 1) + (e % 3)] == "1" && e != 4 )
-						{
-							pop++;
-						}
-					}
-					e++;
-				}
-				if(state[d / Length, d % Length] == "1" && ( pop < 2 || pop > 3))
-				{
-					nextstate[d / Length, d % Length] = "0";
-				}
-				if(state[d / Length, d % Length] == "1" && ( pop == 2 || pop == 3))
-				{
-					nextstate[d / Length , d % Length] = "1";
-				}
-				if(state[d / Length, d % Length] == "0" && pop == 3)
-				{
-					nextstate[d / Length, d % Length] = "1";
-				}
-				if (state[d / Length, d % Length] == "0" && pop != 3)
-				{
-					nextstate[d / Length, d % Length] = "0";
-				}
-				d++;
+			string Hold = State[Cursor / Length, Cursor % Length];
+			State[Cursor / Length, Cursor % Length] = "X ";
 
-			}
-			Console.Clear();
-			int f = 0;
-			while(f < Area)
-			{
-				Console.Write(nextstate[f / Length, f % Length]);
-				if((f + 1) % Length == 0)Console.Write("\n");
-				f++;
-			}
-			Console.Write(Convert.ToString(generation) + "/" + Convert.ToString(generationlim));
-			System.Threading.Thread.Sleep(downtime);
-			Console.Write("\n\n\n");
-			generation++;
-			state = nextstate;
+			DrawState(Length, Area, State);
+			Console.WriteLine("(" + Hold + ")\nToggle (x)\nExecute(Rtn)");
+
+			Cursor = ReadKeyPressed(Cursor, Length, Area, Hold, State);
 		}
+
+						
+		DrawState(Length, Area, State);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+		for(int Generation = 0; Generation < (Generationlim + 1); Generation++)
+		{
+			string[,] NextState = GenerateNextState(Length, Area, State);	
+			System.Threading.Thread.Sleep(Downtime);
+			State = NextState;
+		}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		Console.Clear();
 	}
 }
