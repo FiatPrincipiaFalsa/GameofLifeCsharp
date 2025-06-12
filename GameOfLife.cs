@@ -168,17 +168,29 @@ public class program
 				Console.Clear();
 				Settup = false;
 				break;
-			case ConsoleKey.A:
+			case ConsoleKey.G:
 				State[Cursor / Length , Cursor % Length] = Hold;
-				int[] plan = {1,0,0,0,1,1,1,1,0};
-				for ( int i = 0; i<plan.Length; i++)
+				int[] planG = {1,0,0,0,1,1,1,1,0};
+				for ( int i = 0; i<planG.Length; i++)
 				{
-					if (plan[i] == 1)
+					if (planG[i] == 1)
 					{
 						State[WarpedPosition((Cursor/Length)+(i/3)-1,(Cursor%Length)+(i%3)-1,Length)[0], WarpedPosition((Cursor/Length)+(i/3)-1,(Cursor%Length)+(i%3)-1,Length)[1]] = "\u25a0 ";
 					}
 				}
 				Console.Clear();
+				break;
+			case ConsoleKey.A:
+				State[Cursor / Length , Cursor % Length] = Hold;
+				Console.Clear();
+				int[] planA = {0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1};
+				for ( int i = 0; i<planA.Length; i++)
+				{
+					if (planA[i] == 1)
+					{
+						State[WarpedPosition((Cursor/Length)+(i/7)-1,(Cursor%Length)+(i%7)-3,Length)[0], WarpedPosition((Cursor/Length)+(i/7)-1,(Cursor%Length)+(i%7)-3,Length)[1]] = "\u25a0 ";
+					}
+				}
 				break;
 			default:
 				State[Cursor / Length , Cursor % Length] = Hold;
