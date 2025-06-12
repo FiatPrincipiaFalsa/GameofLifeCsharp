@@ -99,6 +99,7 @@ public class program
 		return State;
 	}
 
+
 	static void DrawState(int Length, int Area, string[,] State)
 	{
 		int i = 0;
@@ -158,6 +159,14 @@ public class program
 				State[Cursor / Length , Cursor % Length] = Hold;
 				Console.Clear();
 				Settup = false;
+				break;
+			case ConsoleKey.A:
+				State[(Cursor / Length) - 1 , (Cursor % Length) - 1] = "\u25a0 ";
+				State[Cursor / Length , Cursor % Length] = "\u25a0 ";
+				State[Cursor / Length , (Cursor % Length) + 1] = "\u25a0 ";
+				State[(Cursor / Length) + 1 , (Cursor % Length) - 1] = "\u25a0 ";
+				State[(Cursor / Length) + 1 , Cursor % Length] = "\u25a0 ";
+				Console.Clear();
 				break;
 			default:
 				State[Cursor / Length , Cursor % Length] = Hold;
