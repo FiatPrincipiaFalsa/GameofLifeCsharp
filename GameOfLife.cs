@@ -3,6 +3,14 @@ public class program
 {
 	static bool Wrap;
 	static bool Settup;
+
+	static int[] WarpedPosition(int Row, int Column, int Length)
+	{
+		int[] FinalPosition = new int[2];
+		FinalPosition[0] = (Row + Length) % Length;
+	        FinalPosition[1] = (Column + Length) % Length;
+		return FinalPosition;
+	}
 	static int AliveNeighbourCount(int Row, int Column, string[,] State)
 	{
 		int AliveCount = 0; 
@@ -161,11 +169,12 @@ public class program
 				Settup = false;
 				break;
 			case ConsoleKey.A:
-				State[(Cursor / Length) - 1 , (Cursor % Length) - 1] = "\u25a0 ";
-				State[Cursor / Length , Cursor % Length] = "\u25a0 ";
-				State[Cursor / Length , (Cursor % Length) + 1] = "\u25a0 ";
-				State[(Cursor / Length) + 1 , (Cursor % Length) - 1] = "\u25a0 ";
-				State[(Cursor / Length) + 1 , Cursor % Length] = "\u25a0 ";
+				State[Cursor / Length , Cursor % Length] = Hold;
+				State[WarpedPosition((Cursor/Length)-1,(Cursor%Length)-1,Length)[0], WarpedPosition((Cursor/Length)-1,(Cursor%Length)-1,Length)[1]] = "\u25a0 ";
+				State[WarpedPosition(Cursor/Length,Cursor%Length,Length)[0], WarpedPosition(Cursor/Length,Cursor%Length,Length)[1]] = "\u25a0 ";
+				State[WarpedPosition(Cursor/Length,(Cursor%Length)+1,Length)[0], WarpedPosition(Cursor/Length,(Cursor%Length)+1,Length)[1]] = "\u25a0 ";
+				State[WarpedPosition((Cursor/Length)+1,(Cursor%Length)-1,Length)[0], WarpedPosition((Cursor/Length)+1,(Cursor%Length)-1,Length)[1]] = "\u25a0 ";
+				State[WarpedPosition((Cursor/Length)+1,Cursor%Length,Length)[0], WarpedPosition((Cursor/Length)+1,Cursor%Length,Length)[1]] = "\u25a0 ";
 				Console.Clear();
 				break;
 			default:
