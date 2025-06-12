@@ -55,38 +55,19 @@ public class program
 	static int[] AskSettings()
 	{
 		int[] Settings = new int[3];
-
-		Console.WriteLine("Natural amount of sleep inbetween generations (50 ms):");
-		string Downtime = Console.ReadLine();
-		if( Downtime != "")
+		string[] PreFabSettings = {"(050 ms)Natural amount of sleep between generations:","(200)Natural amount of generations:", "(010)Natural size of grid:"};
+		for (int i=0;i<3;i++)
 		{
-			Settings[0] = Convert.ToInt32(Downtime);
-		}
-		else
-		{
-			Settings[0] = 50;	
-		}
-
-		Console.WriteLine("Natural amount of generations to be simulated (200 Gemerations):");
-		string GenerationLimit = Console.ReadLine();
-		if(GenerationLimit != "")
-		{
-			Settings[1] = Convert.ToInt32(GenerationLimit);
-		}
-		else
-		{
-			Settings[1] = 200;
-		}
-
-		Console.WriteLine("Natural size of square grid for simulation (10):");
-		string Length = Console.ReadLine();
-		if(Length != "")
-		{
-			Settings[2] = Convert.ToInt32(Length);
-		}
-		else
-		{
-			Settings[2] = 10;
+			Console.WriteLine(PreFabSettings[i]);
+			string Answer = Console.ReadLine();
+			if( Answer != "")
+			{
+				Settings[i] = Convert.ToInt32(Answer);
+			}
+			else
+			{
+				Settings[i] = Convert.ToInt32(PreFabSettings[i].Substring(1,3));
+			}
 		}
 		return Settings;
 	}
