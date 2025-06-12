@@ -1,7 +1,7 @@
 using System;
 public class program
 {
-	static bool Wrap;
+	//static bool Wrap;
 	static bool Settup;
 
 	static int[] WarpedPosition(int Row, int Column, int Length)
@@ -11,7 +11,7 @@ public class program
 	        FinalPosition[1] = (Column + Length) % Length;
 		return FinalPosition;
 	}
-	static int AliveNeighbourCount(int Row, int Column, string[,] State)
+	static int AliveNeighbourCount(int Row, int Column, string[,] State, bool Wrap)
 	{
 		int AliveCount = 0; 
 		for (int Neighbour = 0 ; Neighbour < 9 ; Neighbour++ )
@@ -54,9 +54,9 @@ public class program
 
 	static int[] AskSettings()
 	{
-		int[] Settings = new int[3];
-		string[] PreFabSettings = {"(050 ms)Natural amount of sleep between generations:","(200)Natural amount of generations:", "(010)Natural size of grid:"};
-		for (int i=0;i<3;i++)
+		int[] Settings = new int[4];
+		string[] PreFabSettings = {"(050 ms)Natural amount of sleep between generations:","(200)Natural amount of generations:", "(010)Natural size of grid:", "(001) Wrapped borders 1=On 0=Off:"};
+		for (int i=0;i<4;i++)
 		{
 			Console.WriteLine(PreFabSettings[i]);
 			string Answer = Console.ReadLine();
@@ -69,18 +69,8 @@ public class program
 				Settings[i] = Convert.ToInt32(PreFabSettings[i].Substring(1,3));
 			}
 		}
-		return Settings;
-	}
-
-	static bool AskWrap()
-	{
-		Console.Write("wrapped border or dead border (W/d):");
-		if(Console.ReadLine() == "d")
-		{
-			return false;
-		}
 		Console.Clear();
-		return true;
+		return Settings;
 	}
 
 	static string[,] InitialiseState(int Length, int Area)
@@ -174,14 +164,14 @@ public class program
 		return Cursor;
 	}
 
-	static string[,] GenerateNextState(int Length, int Area, string[,] State)
+	static string[,] GenerateNextState(int Length, int Area, string[,] State, bool Wrap)
 	{
 		string[,] NextState = new string[Length, Length];
 		for(int i = 0; i < Area; i++)
 		{
 			int Row = i / Length;
 			int Column = i % Length;
-			int Pop = AliveNeighbourCount(Row, Column, State);
+			int Pop = AliveNeighbourCount(Row, Column, State, Wrap);
 
 			if(State[Row, Column] == "\u25a0 " && ( Pop < 2 || Pop > 3))
 			{
@@ -213,11 +203,10 @@ public class program
 		int Downtime = Settings[0]; 
 		int Generationlim = Settings[1];
 		int Length = Settings[2];
+		bool Wrap = Settings[3] == 1;
 
 		int Area = Length * Length;
-		
-		Wrap = AskWrap();
-		
+			
 		string[,] State = InitialiseState(Length, Area);
 		
 		int Cursor = 0;
@@ -237,7 +226,7 @@ public class program
 
 		for(int Generation = 0; Generation < (Generationlim + 1); Generation++)
 		{
-			string[,] NextState = GenerateNextState(Length, Area, State);	
+			string[,] NextState = GenerateNextState(Length, Area, State, Wrap);	
 			System.Threading.Thread.Sleep(Downtime);
 			State = NextState;
 		}
