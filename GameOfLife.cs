@@ -133,13 +133,12 @@ public class program
 
 	static string[,] Construct(string[,] State, int[] Plan, int Cursor, int Length, string Hold)
 	{
-		State[Cursor / Length , Cursor % Length] = Hold;
-		int CentralisingVector = (((int)Math.Sqrt(Plan.Length))-1)/2;
-		for ( int i = 0; i<Plan.Length; i++)
+		int CentralisingVector = (((int)Math.Sqrt(Plan.Length)) - 1) / 2;
+		for (int i = 0; i < Plan.Length; i++)
 		{
 			if (Plan[i] == 1)
 			{
-					State[WarpedPosition((Cursor/Length)+(i/(int)Math.Sqrt(Plan.Length))-CentralisingVector,(Cursor%Length)+(i%(int)Math.Sqrt(Plan.Length))-CentralisingVector,Length)[0], WarpedPosition((Cursor/Length)+(i/(int)Math.Sqrt(Plan.Length))-CentralisingVector,(Cursor%Length)+(i%(int)Math.Sqrt(Plan.Length))-CentralisingVector,Length)[1]] = "\u25a0 ";
+					State[WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[0], WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[1]] = "\u25a0 ";
 			}
 		}
 		Console.Clear();
@@ -157,11 +156,11 @@ public class program
 
 	static int ReadKeyPressed(int Cursor, int Length, int Area, string Hold, string[,] State)
 	{
+		State[Cursor / Length, Cursor % Length] = Hold;
 		var ch = Console.ReadKey(false).Key;
 		switch(ch)
 		{
 			case ConsoleKey.RightArrow:
-				State[Cursor / Length, Cursor % Length] = Hold;
 				Console.Clear();
 				if(Cursor == Area - 1)
 					Cursor = 0;
@@ -169,7 +168,6 @@ public class program
 					Cursor = Cursor + 1;
 				break;
 			case ConsoleKey.LeftArrow:
-				State[Cursor / Length, Cursor % Length] = Hold;
 				Console.Clear();
 				if(Cursor == 0)
 					Cursor = Area - 1;
@@ -177,7 +175,6 @@ public class program
 					Cursor = Cursor - 1;
 				break;
 			case ConsoleKey.UpArrow:
-				State[Cursor / Length, Cursor % Length] = Hold;
 				Console.Clear();
 				if(Cursor / Length == 0)
 					Cursor = Cursor + Length * (Length - 1);
@@ -185,7 +182,6 @@ public class program
 					Cursor = Cursor - Length;
 				break;
 			case ConsoleKey.DownArrow:
-				State[Cursor / Length, Cursor % Length] = Hold;
 				Console.Clear();
 				if(Cursor / Length == Length - 1)
 					Cursor = Cursor - Length * (Length - 1);
@@ -200,13 +196,10 @@ public class program
 				Console.Clear();
 				break;
 			case ConsoleKey.Enter:
-				State[Cursor / Length , Cursor % Length] = Hold;
 				Console.Clear();
 				Settup = false;
 				break;
-
-
-/////////////////////////////////////////////////////////////////////////constructs  START (use only square plans)
+//(use only square plans)
 			case ConsoleKey.G:
 				int[] PlanG = {1,0,0,0,1,1,1,1,0};
 				State = Construct(State, PlanG, Cursor, Length, Hold);
@@ -215,11 +208,7 @@ public class program
 				int[] PlanA = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 				State = Construct(State, PlanA, Cursor, Length, Hold);
 				break;
-///////////////////////////////////////////////////////////////////////constructs END
-
-
 			default:
-				State[Cursor / Length , Cursor % Length] = Hold;
 				Console.Clear();
 				break;
 		}
