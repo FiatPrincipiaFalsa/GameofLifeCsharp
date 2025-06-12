@@ -119,6 +119,42 @@ public class program
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+	static string[,] Construct(string[,] State, int[] Plan, int Cursor, int Length, string Hold)
+	{
+		State[Cursor / Length , Cursor % Length] = Hold;
+		int CentralisingVector = (((int)Math.Sqrt(Plan.Length))-1)/2;
+		for ( int i = 0; i<Plan.Length; i++)
+		{
+			if (Plan[i] == 1)
+			{
+					State[WarpedPosition((Cursor/Length)+(i/(int)Math.Sqrt(Plan.Length))-CentralisingVector,(Cursor%Length)+(i%(int)Math.Sqrt(Plan.Length))-CentralisingVector,Length)[0], WarpedPosition((Cursor/Length)+(i/(int)Math.Sqrt(Plan.Length))-CentralisingVector,(Cursor%Length)+(i%(int)Math.Sqrt(Plan.Length))-CentralisingVector,Length)[1]] = "\u25a0 ";
+			}
+		}
+		Console.Clear();
+		return State;
+	}
+
+
+
+
+
+
+
+
+
+
 	static int ReadKeyPressed(int Cursor, int Length, int Area, string Hold, string[,] State)
 	{
 		var ch = Console.ReadKey(false).Key;
@@ -168,30 +204,20 @@ public class program
 				Console.Clear();
 				Settup = false;
 				break;
+
+
+/////////////////////////////////////////////////////////////////////////constructs  START (use only square plans)
 			case ConsoleKey.G:
-				State[Cursor / Length , Cursor % Length] = Hold;
-				int[] planG = {1,0,0,0,1,1,1,1,0};
-				for ( int i = 0; i<planG.Length; i++)
-				{
-					if (planG[i] == 1)
-					{
-						State[WarpedPosition((Cursor/Length)+(i/3)-1,(Cursor%Length)+(i%3)-1,Length)[0], WarpedPosition((Cursor/Length)+(i/3)-1,(Cursor%Length)+(i%3)-1,Length)[1]] = "\u25a0 ";
-					}
-				}
-				Console.Clear();
+				int[] PlanG = {1,0,0,0,1,1,1,1,0};
+				State = Construct(State, PlanG, Cursor, Length, Hold);
 				break;
 			case ConsoleKey.A:
-				State[Cursor / Length , Cursor % Length] = Hold;
-				Console.Clear();
-				int[] planA = {0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1};
-				for ( int i = 0; i<planA.Length; i++)
-				{
-					if (planA[i] == 1)
-					{
-						State[WarpedPosition((Cursor/Length)+(i/7)-1,(Cursor%Length)+(i%7)-3,Length)[0], WarpedPosition((Cursor/Length)+(i/7)-1,(Cursor%Length)+(i%7)-3,Length)[1]] = "\u25a0 ";
-					}
-				}
+				int[] PlanA = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+				State = Construct(State, PlanA, Cursor, Length, Hold);
 				break;
+///////////////////////////////////////////////////////////////////////constructs END
+
+
 			default:
 				State[Cursor / Length , Cursor % Length] = Hold;
 				Console.Clear();
