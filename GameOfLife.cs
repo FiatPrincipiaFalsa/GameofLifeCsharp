@@ -119,18 +119,6 @@ public class program
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	static string[,] Construct(string[,] State, int[] Plan, int Cursor, int Length, string Hold)
 	{
 		int CentralisingVector = (((int)Math.Sqrt(Plan.Length)) - 1) / 2;
@@ -141,18 +129,8 @@ public class program
 					State[WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[0], WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[1]] = "\u25a0 ";
 			}
 		}
-		Console.Clear();
 		return State;
 	}
-
-
-
-
-
-
-
-
-
 
 	static int ReadKeyPressed(int Cursor, int Length, int Area, string Hold, string[,] State)
 	{
@@ -161,28 +139,24 @@ public class program
 		switch(ch)
 		{
 			case ConsoleKey.RightArrow:
-				Console.Clear();
 				if(Cursor == Area - 1)
 					Cursor = 0;
 				else
 					Cursor = Cursor + 1;
 				break;
 			case ConsoleKey.LeftArrow:
-				Console.Clear();
 				if(Cursor == 0)
 					Cursor = Area - 1;
 				else
 					Cursor = Cursor - 1;
 				break;
 			case ConsoleKey.UpArrow:
-				Console.Clear();
 				if(Cursor / Length == 0)
 					Cursor = Cursor + Length * (Length - 1);
 				else
 					Cursor = Cursor - Length;
 				break;
 			case ConsoleKey.DownArrow:
-				Console.Clear();
 				if(Cursor / Length == Length - 1)
 					Cursor = Cursor - Length * (Length - 1);
 				else
@@ -193,13 +167,10 @@ public class program
 					State[Cursor / Length, Cursor % Length] = "\u25a0 ";
 				else
 					State[Cursor / Length, Cursor % Length] = "\u25a1 ";
-				Console.Clear();
 				break;
 			case ConsoleKey.Enter:
-				Console.Clear();
 				Settup = false;
 				break;
-//(use only square plans)
 			case ConsoleKey.G:
 				int[] PlanG = {1,0,0,0,1,1,1,1,0};
 				State = Construct(State, PlanG, Cursor, Length, Hold);
@@ -209,9 +180,9 @@ public class program
 				State = Construct(State, PlanA, Cursor, Length, Hold);
 				break;
 			default:
-				Console.Clear();
 				break;
 		}
+		Console.Clear();
 		return Cursor;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
