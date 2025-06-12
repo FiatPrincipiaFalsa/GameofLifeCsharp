@@ -52,37 +52,43 @@ public class program
 		return State[Row, Column] == "\u25a0 " ;
 	}
 
-	static int AskSleep()
+	static int[] AskSettings()
 	{
+		int[] Settings = new int[3];
+
 		Console.WriteLine("Natural amount of sleep inbetween generations (50 ms):");
 		string Downtime = Console.ReadLine();
 		if( Downtime != "")
 		{
-			return Convert.ToInt32(Downtime);
+			Settings[0] = Convert.ToInt32(Downtime);
 		}
-		return 50;	
-	}
+		else
+		{
+			Settings[0] = 50;	
+		}
 
-	static int AskGenerations()
-	{
 		Console.WriteLine("Natural amount of generations to be simulated (200 Gemerations):");
 		string GenerationLimit = Console.ReadLine();
 		if(GenerationLimit != "")
 		{
-			return Convert.ToInt32(GenerationLimit);
+			Settings[1] = Convert.ToInt32(GenerationLimit);
 		}
-		return 200;
-	}
+		else
+		{
+			Settings[1] = 200;
+		}
 
-	static int AskMatrixSize()
-	{
 		Console.WriteLine("Natural size of square grid for simulation (10):");
 		string Length = Console.ReadLine();
 		if(Length != "")
 		{
-			return  Convert.ToInt32(Length);
+			Settings[2] = Convert.ToInt32(Length);
 		}
-		return 10;
+		else
+		{
+			Settings[2] = 10;
+		}
+		return Settings;
 	}
 
 	static bool AskWrap()
@@ -92,6 +98,7 @@ public class program
 		{
 			return false;
 		}
+		Console.Clear();
 		return true;
 	}
 
@@ -185,7 +192,7 @@ public class program
 		Console.Clear();
 		return Cursor;
 	}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	static string[,] GenerateNextState(int Length, int Area, string[,] State)
 	{
 		string[,] NextState = new string[Length, Length];
@@ -215,17 +222,20 @@ public class program
 			}
 		}
 		return NextState;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+
 	}
 	public static void Main()
 	{
 		Console.Clear();
-		int Downtime = AskSleep();
-		int Generationlim = AskGenerations();
-		int Length = AskMatrixSize();
+		
+		int[] Settings = AskSettings();
+		int Downtime = Settings[0]; 
+		int Generationlim = Settings[1];
+		int Length = Settings[2];
+
 		int Area = Length * Length;
+		
 		Wrap = AskWrap();
-		Console.Clear();
 		
 		string[,] State = InitialiseState(Length, Area);
 		
@@ -241,17 +251,15 @@ public class program
 
 			Cursor = ReadKeyPressed(Cursor, Length, Area, Hold, State);
 		}
-
-						
+				
 		DrawState(Length, Area, State);
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+
 		for(int Generation = 0; Generation < (Generationlim + 1); Generation++)
 		{
 			string[,] NextState = GenerateNextState(Length, Area, State);	
 			System.Threading.Thread.Sleep(Downtime);
 			State = NextState;
 		}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		Console.Clear();
 	}
