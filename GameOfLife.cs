@@ -1,9 +1,7 @@
 using System;
 public class program
 {
-	//static bool Wrap;
 	static bool Settup;
-
 	static int[] WarpedPosition(int Row, int Column, int Length)
 	{
 		int[] FinalPosition = new int[2];
@@ -88,6 +86,7 @@ public class program
 
 	static void DrawState(int Length, int Area, string[,] State)
 	{
+		Console.Clear();
 		int i = 0;
 		while(i < Area)
 		{	
@@ -97,7 +96,7 @@ public class program
 		}
 	}
 
-	static string[,] Construct(string[,] State, int[] Plan, int Cursor, int Length, string Hold)
+	static string[,] Construct(string[,] State, int[] Plan, int Cursor, int Length)
 	{
 		int CentralisingVector = (((int)Math.Sqrt(Plan.Length)) - 1) / 2;
 		for (int i = 0; i < Plan.Length; i++)
@@ -110,58 +109,74 @@ public class program
 		return State;
 	}
 
-	static int ReadKeyPressed(int Cursor, int Length, int Area, string Hold, string[,] State)
+	static int ReadKeyPressed(int CursorPos, int Length, int Area, string[,] State)
 	{
-		State[Cursor / Length, Cursor % Length] = Hold;
 		var ch = Console.ReadKey(false).Key;
 		switch(ch)
 		{
-			case ConsoleKey.RightArrow:
-				if(Cursor == Area - 1)
-					Cursor = 0;
+				case ConsoleKey.RightArrow:
+				Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+				Console.Write(State[CursorPos/Length,CursorPos%Length]);
+				if(CursorPos == Area - 1)
+					CursorPos = 0;
 				else
-					Cursor = Cursor + 1;
+					CursorPos = CursorPos + 1;
 				break;
 			case ConsoleKey.LeftArrow:
-				if(Cursor == 0)
-					Cursor = Area - 1;
+				Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+				Console.Write(State[CursorPos/Length,CursorPos%Length]);
+				if(CursorPos == 0)
+					CursorPos = Area - 1;
 				else
-					Cursor = Cursor - 1;
+					CursorPos = CursorPos - 1;
 				break;
 			case ConsoleKey.UpArrow:
-				if(Cursor / Length == 0)
-					Cursor = Cursor + Length * (Length - 1);
+				Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+				Console.Write(State[CursorPos/Length,CursorPos%Length]);
+				if(CursorPos / Length == 0)
+					CursorPos = CursorPos + Length * (Length - 1);
 				else
-					Cursor = Cursor - Length;
+					CursorPos = CursorPos - Length;
 				break;
 			case ConsoleKey.DownArrow:
-				if(Cursor / Length == Length - 1)
-					Cursor = Cursor - Length * (Length - 1);
+				Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+				Console.Write(State[CursorPos/Length,CursorPos%Length]);
+				if(CursorPos / Length == Length - 1)
+					CursorPos = CursorPos - Length * (Length - 1);
 				else
-					Cursor = Cursor + Length;
+					CursorPos = CursorPos + Length;
 				break;
 			case ConsoleKey.X:
-				if (Hold == "\u25a1 ")
-					State[Cursor / Length, Cursor % Length] = "\u25a0 ";
+				if (State[CursorPos / Length, CursorPos % Length] == "\u25a1 ")
+				{
+					State[CursorPos / Length, CursorPos % Length] = "\u25a0 ";
+					Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+					Console.Write("\u25a0 ");
+				}
 				else
-					State[Cursor / Length, Cursor % Length] = "\u25a1 ";
+				{
+					State[CursorPos / Length, CursorPos % Length] = "\u25a1 ";
+					Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+					Console.Write("\u25a1 ");
+				}
 				break;
 			case ConsoleKey.Enter:
 				Settup = false;
 				break;
 			case ConsoleKey.G:
 				int[] PlanG = {1,0,0,0,1,1,1,1,0};
-				State = Construct(State, PlanG, Cursor, Length, Hold);
+				State = Construct(State, PlanG, CursorPos, Length);
+				DrawState(Length, Area, State);
 				break;
 			case ConsoleKey.A:
 				int[] PlanA = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-				State = Construct(State, PlanA, Cursor, Length, Hold);
+				State = Construct(State, PlanA, CursorPos, Length);
+				DrawState(Length, Area, State);
 				break;
 			default:
 				break;
 		}
-		Console.Clear();
-		return Cursor;
+		return CursorPos;
 	}
 
 	static string[,] GenerateNextState(int Length, int Area, string[,] State, bool Wrap)
@@ -197,8 +212,6 @@ public class program
 	}
 	public static void Main()
 	{
-		Console.Clear();
-		
 		int[] Settings = AskSettings();
 		int Downtime = Settings[0]; 
 		int Generationlim = Settings[1];
@@ -206,22 +219,22 @@ public class program
 		bool Wrap = Settings[3] == 1;
 
 		int Area = Length * Length;
-			
 		string[,] State = InitialiseState(Length, Area);
+		int CursorPos = 0;
+
+		Console.Clear();
+		Console.CursorVisible = false;
+		DrawState(Length, Area, State);
 		
-		int Cursor = 0;
 		Settup = true;
 		while(Settup)
 		{
-			string Hold = State[Cursor / Length, Cursor % Length];
-			State[Cursor / Length, Cursor % Length] = "X ";
-
-			DrawState(Length, Area, State);
-			Console.WriteLine("(" + Hold + ")\nToggle (x)\nExecute(Rtn)");
-
-			Cursor = ReadKeyPressed(Cursor, Length, Area, Hold, State);
+			Console.SetCursorPosition(2*(CursorPos%Length),CursorPos/Length);
+			Console.Write("X");
+			CursorPos = ReadKeyPressed(CursorPos, Length, Area, State);
 		}
-				
+		
+		Console.Clear();		
 		DrawState(Length, Area, State);
 
 		for(int Generation = 0; Generation < (Generationlim + 1); Generation++)
@@ -230,7 +243,7 @@ public class program
 			System.Threading.Thread.Sleep(Downtime);
 			State = NextState;
 		}
-
+		Console.CursorVisible = true;
 		Console.Clear();
 	}
 }
