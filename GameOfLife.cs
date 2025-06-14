@@ -56,15 +56,26 @@ public class program
 		string[] PreFabSettings = {"(050 ms)Natural amount of sleep between generations:","(200)Natural amount of generations:", "(010)Natural size of grid:", "(001) Wrapped borders 1=On 0=Off:"};
 		for (int i=0;i<4;i++)
 		{
-			Console.WriteLine(PreFabSettings[i]);
-			string Answer = Console.ReadLine();
-			if( Answer != "")
+			int X;
+			bool loop = true;
+			while (loop == true)
 			{
-				Settings[i] = Convert.ToInt32(Answer);
-			}
-			else
-			{
-				Settings[i] = Convert.ToInt32(PreFabSettings[i].Substring(1,3));
+				Console.WriteLine(PreFabSettings[i]);
+				string Answer = Console.ReadLine();
+				if( Answer != "" && int.TryParse(Answer, out X))
+				{
+					Settings[i] = Convert.ToInt32(Answer);
+					loop = false;
+				}
+				else if (Answer == "")
+				{
+					Settings[i] = Convert.ToInt32(PreFabSettings[i].Substring(1,3));
+					loop = false;
+				}
+				else
+				{
+					Console.Clear();
+				}
 			}
 		}
 		Console.Clear();
@@ -175,12 +186,22 @@ public class program
 				DrawState(Length, Area, State);
 				break;
 			case ConsoleKey.G:
-				int[] PlanG = {1,0,0,0,1,1,1,1,0};
+				int[] PlanG = {
+						1,0,0,
+						0,1,1,
+						1,1,0};
 				State = Construct(State, PlanG, CursorPos, Length);
 				DrawState(Length, Area, State);
 				break;
 			case ConsoleKey.A:
-				int[] PlanA = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+				int[] PlanA = {
+						0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,
+						0,1,0,0,0,0,0,
+						0,0,0,1,0,0,0,
+						1,1,0,0,1,1,1,
+						0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0};
 				State = Construct(State, PlanA, CursorPos, Length);
 				DrawState(Length, Area, State);
 				break;
