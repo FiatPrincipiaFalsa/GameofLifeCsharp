@@ -163,6 +163,17 @@ public class program
 			case ConsoleKey.Enter:
 				Settup = false;
 				break;
+			case ConsoleKey.H:
+				Console.Clear();
+				string Help = "Constructs:\n	A: Acorn\n	G: Glider\n\n\nQ: Quit help window ";
+				Console.Write(Help);
+				while (Console.ReadKey(false).Key != ConsoleKey.Q)
+				{
+					Console.Clear();
+					Console.Write(Help);
+				}
+				DrawState(Length, Area, State);
+				break;
 			case ConsoleKey.G:
 				int[] PlanG = {1,0,0,0,1,1,1,1,0};
 				State = Construct(State, PlanG, CursorPos, Length);
@@ -212,6 +223,9 @@ public class program
 	}
 	public static void Main()
 	{
+		Console.Clear();
+		Console.CursorVisible = false;
+		
 		int[] Settings = AskSettings();
 		int Downtime = Settings[0]; 
 		int Generationlim = Settings[1];
@@ -222,8 +236,6 @@ public class program
 		string[,] State = InitialiseState(Length, Area);
 		int CursorPos = 0;
 
-		Console.Clear();
-		Console.CursorVisible = false;
 		DrawState(Length, Area, State);
 		
 		Settup = true;
