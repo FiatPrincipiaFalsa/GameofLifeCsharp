@@ -2,35 +2,26 @@ using System;
 public class program
 {
 	static bool Settup;
-	static int[] WarpedPosition(int Row, int Column, int Length)
+	static int Length;
+	static int[] WarpedPosition(int[] Cell)
 	{
-		int[] FinalPosition = new int[2];
-		FinalPosition[0] = (Row + Length) % Length;
-	        FinalPosition[1] = (Column + Length) % Length;
-		return FinalPosition;
+		int[] WarpedPosition = new int[2];
+		for (int i = 0; i < 2; i++)
+			WarpedPosition[i] = (Cell[i] + Length) % Length;
+		return WarpedPosition;
 	}
-	static int AliveNeighbourCount(int Row, int Column, string[,] State, bool Wrap)
+	static int AliveNeighbourCount(int[] Cell,string[,] State, int Length, bool Wrap)
 	{
-		int AliveCount = 0; 
-		for (int Neighbour = 0 ; Neighbour < 9 ; Neighbour++ )
+		int AliveCount = 0;
+		for (int Neighbour = 0 ; Neighbour < 9 ; Neighbour++)
 		{	
-			int NeighbourRow = Row + ((Neighbour / 3) - 1);
-			int NeighbourColumn = Column + ((Neighbour % 3) - 1);
+			int[] NeighbourCell = {Cell[0]+(Neighbour/3)-1,Cell[1]+(Neighbour%3)-1};
 			if (Wrap)
-			{
-				NeighbourRow = (NeighbourRow + State.GetLength(0)) % (State.GetLength(0));
-				NeighbourColumn = (NeighbourColumn + State.GetLength(0)) % (State.GetLength(0));
-			}
-
-			if (NeighbourRow == Row && NeighbourColumn == Column)
-			{
+				NeighbourCell = WarpedPosition(NeighbourCell);
+			if ( NeighbourCell[0]==Cell[0]&&NeighbourCell[1]==Cell[1])
 				continue;
-			}
-
-			if (IsCellAlive(NeighbourRow, NeighbourColumn, State))
-			{
+			if (IsCellAlive(NeighbourCell[0], NeighbourCell[1], State))
 				AliveCount++;
-			}
 		}
 		return AliveCount;
 
@@ -114,7 +105,8 @@ public class program
 		{
 			if (Plan[i] == 1)
 			{
-					State[WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[0], WarpedPosition((Cursor / Length) + (i / (int)Math.Sqrt(Plan.Length)) - CentralisingVector, (Cursor % Length) + (i % (int)Math.Sqrt(Plan.Length)) - CentralisingVector, Length)[1]] = "\u25a0 ";
+				int[] Cell = {(Cursor/Length)+(i/(int)Math.Sqrt(Plan.Length))-CentralisingVector,(Cursor%Length)+(i%(int)Math.Sqrt(Plan.Length))-CentralisingVector};
+				State[WarpedPosition(Cell)[0], WarpedPosition(Cell)[1]] = "\u25a0 ";
 			}
 		}
 		return State;
@@ -216,27 +208,26 @@ public class program
 		string[,] NextState = new string[Length, Length];
 		for(int i = 0; i < Area; i++)
 		{
-			int Row = i / Length;
-			int Column = i % Length;
-			int Pop = AliveNeighbourCount(Row, Column, State, Wrap);
+			int[] Cell = {i/Length,i%Length};
+			int Pop = AliveNeighbourCount(Cell, State, Length, Wrap);
 
-			if(State[Row, Column] == "\u25a0 " && ( Pop < 2 || Pop > 3))
+			if(State[Cell[0],Cell[1]] == "\u25a0 " && ( Pop < 2 || Pop > 3))
 			{
-				NextState[Row, Column] = "\u25a1 ";
-				Console.SetCursorPosition(2*Column,Row);
+				NextState[Cell[0],Cell[1]] = "\u25a1 ";
+				Console.SetCursorPosition(2*Cell[1],Cell[0]);
 				Console.Write("\u25a1 ");
 				continue;
 			}
-			if(State[Row, Column] == "\u25a1 " && Pop == 3)
+			if(State[Cell[0], Cell[1]] == "\u25a1 " && Pop == 3)
 			{
-				NextState[Row, Column] = "\u25a0 ";
-				Console.SetCursorPosition(2*Column,Row);
+				NextState[Cell[0], Cell[1]] = "\u25a0 ";
+				Console.SetCursorPosition(2*Cell[1],Cell[0]);
 				Console.Write("\u25a0 ");
 				continue;
 			}
 			else 
 			{
-				NextState[Row, Column] = State[Row, Column];
+				NextState[Cell[0], Cell[1]] = State[Cell[0], Cell[1]];
 			}
 		}
 		return NextState;
@@ -250,7 +241,7 @@ public class program
 		int[] Settings = AskSettings();
 		int Downtime = Settings[0]; 
 		int Generationlim = Settings[1];
-		int Length = Settings[2];
+		Length = Settings[2];
 		bool Wrap = Settings[3] == 1;
 
 		int Area = Length * Length;
